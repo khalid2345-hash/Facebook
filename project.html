@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Global Daily — Breaking News, Analysis & Live Updates</title>
+  <meta name="description" content="A CNN‑style news homepage template with breaking ticker, hero grid, sections, and responsive layout. Built with vanilla HTML/CSS/JS." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #111213;
+      --muted: #6b7280;
+      --brand: #cc0000; /* red accent reminiscent of many news sites */
+      --chip: #f3f4f6;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --shadow: 0 10px 20px rgba(0,0,0,.08);
+    }
+    @media (prefers-color-scheme: dark){
+      :root { --bg:#0b0c0d; --text:#f5f5f6; --muted:#a1a1aa; --chip:#17181a; --card:#121315; --border:#222428; --shadow: 0 12px 24px rgba(0,0,0,.35);} 
+    }
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{ margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif; background:var(--bg); color:var(--text); }
+    a{ color:inherit; text-decoration:none }
+    img{ display:block; width:100%; height:auto; border-radius:14px }
+
+    /* Header */
+    .topbar{ position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(8px); background:color-mix(in oklab, var(--bg) 85%, transparent); border-bottom:1px solid var(--border) }
+    .topbar-inner{ max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:16px; padding:12px 16px }
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .brand-badge{ width:28px; height:28px; border-radius:6px; background:var(--brand); box-shadow:var(--shadow) }
+    .brand h1{ font-size:20px; font-weight:800; letter-spacing:.2px }
+    .nav{ display:flex; gap:14px; flex-wrap:wrap }
+    .nav a{ font-weight:600; font-size:14px; padding:8px 10px; border-radius:10px }
+    .nav a:hover{ background:var(--chip) }
+    .spacer{ flex:1 }
+    .search{ display:flex; align-items:center; gap:8px; background:var(--chip); padding:8px 12px; border-radius:12px; border:1px solid var(--border) }
+    .search input{ border:none; outline:none; background:transparent; color:var(--text) }
+    .actions{ display:flex; align-items:center; gap:10px }
+    .btn{ border:1px solid var(--border); padding:8px 12px; border-radius:12px; font-weight:600; background:var(--card); box-shadow:var(--shadow) }
+
+    /* Breaking ticker */
+    .ticker{ border-bottom:1px solid var(--border); background:var(--card) }
+    .ticker-inner{ max-width:1200px; margin:0 auto; display:flex; gap:12px; padding:10px 16px; align-items:center }
+    .pill{ background:var(--brand); color:#fff; font-weight:800; letter-spacing:.3px; padding:6px 10px; border-radius:999px; font-size:12px }
+    .marquee{ overflow:hidden; position:relative; flex:1; height:22px }
+    .marquee-track{ position:absolute; white-space:nowrap; will-change:transform; animation:scroll 30s linear infinite }
+    @keyframes scroll{ from{ transform:translateX(0) } to{ transform:translateX(-50%) } }
+
+    /* Layout */
+    .wrap{ max-width:1200px; margin:16px auto; padding:0 16px; display:grid; grid-template-columns: 2fr 1fr; gap:22px }
+    @media (max-width:980px){ .wrap{ grid-template-columns: 1fr } }
+
+    /* Hero grid */
+    .hero{ display:grid; grid-template-columns: 1.3fr 1fr; gap:18px }
+    @media (max-width:780px){ .hero{ grid-template-columns:1fr } }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow) }
+    .card-inner{ padding:14px 14px 16px }
+    .eyebrow{ color:var(--brand); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px }
+    .headline{ font-size: clamp(20px, 3.2vw, 34px); font-weight:800; line-height:1.1; margin:6px 0 8px }
+    .dek{ color:var(--muted); font-size:14px; line-height:1.5 }
+
+    .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:18px }
+    .grid-3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:16px }
+    @media (max-width:820px){ .grid-3{ grid-template-columns:1fr 1fr } }
+    @media (max-width:560px){ .grid-3{ grid-template-columns:1fr } }
+
+    /* Sidebar */
+    .side{ display:flex; flex-direction:column; gap:16px }
+    .module{ background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow) }
+    .module h3{ margin:0; padding:14px 16px; border-bottom:1px solid var(--border); font-size:16px }
+    .list{ list-style:none; margin:0; padding:12px 0 }
+    .list li{ padding:10px 16px; border-bottom:1px dashed var(--border) }
+    .list li:last-child{ border-bottom:none }
+    .list a{ font-weight:600 }
+    .meta{ display:flex; gap:8px; align-items:center; margin-top:10px; color:var(--muted); font-size:12px }
+    .chip{ background:var(--chip); border:1px solid var(--border); padding:4px 8px; border-radius:999px; font-size:12px; font-weight:600 }
+
+    /* Sections */
+    .section{ margin-top:12px }
+    .section h2{ font-size:18px; margin:0 0 12px; padding:0 2px; display:flex; align-items:center; gap:10px }
+    .section h2::after{ content:""; height:1px; background:var(--border); flex:1 }
+
+    /* Footer */
+    footer{ margin-top:40px; border-top:1px solid var(--border); padding:24px 16px; background:var(--card) }
+    .footer-inner{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:16px }
+    @media (max-width:820px){ .footer-inner{ grid-template-columns:1fr 1fr } }
+    @media (max-width:560px){ .footer-inner{ grid-template-columns:1fr } }
+    .copyright{ margin-top:14px; color:var(--muted); font-size:12px }
+    .footer-col h4{ margin:0 0 10px; font-size:14px }
+    .footer-col a{ display:block; padding:6px 0; color:var(--muted) }
+
+    /* Utilities */
+    .row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap }
+    .muted{ color:var(--muted) }
+    .hide-sm{ display:block }
+    @media (max-width:680px){ .hide-sm{ display:none } }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="topbar" role="banner">
+    <div class="topbar-inner">
+      <a class="brand" href="#" aria-label="Global Daily home">
+        <span class="brand-badge" aria-hidden="true"></span>
+        <h1>Global <span style="color:var(--brand)">Daily</span></h1>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#latest">Latest</a>
+        <a href="#world">World</a>
+        <a href="#business">Business</a>
+        <a href="#tech">Tech</a>
+        <a href="#sport">Sport</a>
+        <a href="#ent">Entertainment</a>
+        <a href="#health" class="hide-sm">Health</a>
+        <a href="#travel" class="hide-sm">Travel</a>
+      </nav>
+      <div class="spacer"></div>
+      <label class="search" aria-label="Search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/></svg>
+        <input type="search" placeholder="Search news" aria-label="Search input"/>
+      </label>
+      <div class="actions">
+        <button class="btn" id="themeToggle" aria-pressed="false">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breaking Ticker -->
+  <div class="ticker" role="region" aria-label="Breaking news">
+    <div class="ticker-inner">
+      <span class="pill">Breaking</span>
+      <div class="marquee" aria-live="polite">
+        <div class="marquee-track" id="marqueeTrack">
+          Markets edge higher after central bank hints at rate pause — Live updates •
+          Major storm system moves across the Atlantic — Flights impacted •
+          Tech giant unveils next‑gen AI chip — Analysts react •
+          Election commission releases preliminary results — What to know •
+          Global energy summit opens with new climate pledges •
+          Markets edge higher after central bank hints at rate pause — Live updates •
+          Major storm system moves across the Atlantic — Flights impacted •
+          Tech giant unveils next‑gen AI chip — Analysts react •
+          Election commission releases preliminary results — What to know •
+          Global energy summit opens with new climate pledges •
+        </div>
+      </div>
+      <span class="chip" id="clock" aria-label="Local time">--:--</span>
+    </div>
+  </div>
+
+  <main class="wrap" id="latest">
+    <!-- HERO AREA -->
+    <section class="hero" aria-label="Top stories">
+      <article class="card" style="grid-row: span 2;">
+        <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1400&auto=format&fit=crop" alt="City skyline at dusk with breaking headline"/>
+        <div class="card-inner">
+          <div class="eyebrow">Top Story</div>
+          <h2 class="headline"><a href="#">Leaders strike late‑night deal after marathon talks — here’s what’s in it</a></h2>
+          <p class="dek">Negotiators emerged with a framework addressing energy, security, and inflation. Here are the six measures that could affect your daily life.</p>
+          <div class="meta"><span class="chip">Analysis</span><span>•</span><time>12m ago</time></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop" alt="Circuit board close up"/>
+        <div class="card-inner">
+          <div class="eyebrow">Technology</div>
+          <h3 class="headline" style="font-size:22px"><a href="#">New AI chip promises record efficiency — can it deliver?</a></h3>
+          <div class="meta"><span class="chip">Tech</span><span>•</span><time>35m ago</time></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop" alt="Storm clouds over ocean"/>
+        <div class="card-inner">
+          <div class="eyebrow">Weather</div>
+          <h3 class="headline" style="font-size:22px"><a href="#">Tropical system strengthens; coastal cities brace for impact</a></h3>
+          <div class="meta"><span class="chip">Live</span><span>•</span><time>1h ago</time></div>
+        </div>
+      </article>
+
+      <div class="grid-2">
+        <article class="card">
+          <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop" alt="Forest and river"/>
+          <div class="card-inner">
+            <div class="eyebrow">Climate</div>
+            <h3 class="headline" style="font-size:20px"><a href="#">Global summit unveils new conservation fund targeting key habitats</a></h3>
+            <div class="meta"><span class="chip">Environment</span><span>•</span><time>2h ago</time></div>
+          </div>
+        </article>
+        <article class="card">
+          <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop" alt="Stadium crowd"/>
+          <div class="card-inner">
+            <div class="eyebrow">Sport</div>
+            <h3 class="headline" style="font-size:20px"><a href="#">Championship goes to decisive game after late comeback</a></h3>
+            <div class="meta"><span class="chip">Highlights</span><span>•</span><time>3h ago</time></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SIDEBAR -->
+    <aside class="side" aria-label="Sidebar">
+      <section class="module">
+        <h3>Quick Reads</h3>
+        <ul class="list">
+          <li><a href="#">Airlines issue waivers as storm disrupts travel</a><div class="meta"><time>8m</time> • <span class="muted">2 min read</span></div></li>
+          <li><a href="#">What the new rate pause means for mortgages</a><div class="meta"><time>22m</time> • <span class="muted">4 min read</span></div></li>
+          <li><a href="#">Scientists map deep‑sea volcano field</a><div class="meta"><time>41m</time> • <span class="muted">3 min read</span></div></li>
+          <li><a href="#">Five charts to understand food prices</a><div class="meta"><time>1h</time> • <span class="muted">5 min read</span></div></li>
+        </ul>
+      </section>
+      <section class="module">
+        <h3>Trending</h3>
+        <ul class="list">
+          <li><a href="#">How a tiny startup shook up big tech</a></li>
+          <li><a href="#">The new rules of work in 2025</a></li>
+          <li><a href="#">Inside the race to build green steel</a></li>
+          <li><a href="#">Why sleep is the secret to performance</a></li>
+        </ul>
+      </section>
+      <section class="module">
+        <h3>Newsletter</h3>
+        <div class="card-inner">
+          <p class="muted">Get the day’s essential news in your inbox.</p>
+          <form class="row" onsubmit="event.preventDefault(); alert('Thanks for subscribing!')">
+            <input type="email" placeholder="you@example.com" required style="flex:1; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text)" />
+            <button class="btn" type="submit">Subscribe</button>
+          </form>
+        </div>
+      </section>
+    </aside>
+
+    <!-- MORE SECTIONS -->
+    <section class="section" id="world" aria-label="World">
+      <h2>World</h2>
+      <div class="grid-3">
+        <article class="card"><img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1200&auto=format&fit=crop" alt="Parliament building"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Ceasefire holds as border crossings reopen</a></h3><div class="meta"><span class="chip">Developing</span><span>•</span><time>2h ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1200&auto=format&fit=crop" alt="City from above"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Why megacities are rethinking transport</a></h3><div class="meta"><span class="chip">Explainer</span><span>•</span><time>3h ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1505764706515-aa95265c5abc?q=80&w=1200&auto=format&fit=crop" alt="Flags of countries"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Trade ministers eye new regional pact</a></h3><div class="meta"><span class="chip">World</span><span>•</span><time>4h ago</time></div></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="business" aria-label="Business">
+      <h2>Business</h2>
+      <div class="grid-3">
+        <article class="card"><img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=1200&auto=format&fit=crop" alt="Stock market"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Stocks climb as investors parse earnings</a></h3><div class="meta"><span class="chip">Markets</span><span>•</span><time>Just now</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1200&auto=format&fit=crop" alt="Factory"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Manufacturing rebound beats forecasts</a></h3><div class="meta"><span class="chip">Economy</span><span>•</span><time>58m ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1554224155-1696413568bc?q=80&w=1200&auto=format&fit=crop" alt="Coins"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">What the rate pause means for savings</a></h3><div class="meta"><span class="chip">Personal Finance</span><span>•</span><time>2h ago</time></div></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="tech" aria-label="Technology">
+      <h2>Technology</h2>
+      <div class="grid-3">
+        <article class="card"><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop" alt="AI board"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Startups race to deploy on‑device AI</a></h3><div class="meta"><span class="chip">AI</span><span>•</span><time>1h ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?q=80&w=1200&auto=format&fit=crop" alt="Phone"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">This feature could change mobile gaming</a></h3><div class="meta"><span class="chip">Mobile</span><span>•</span><time>2h ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1551281044-8c88e48a1a88?q=80&w=1200&auto=format&fit=crop" alt="Cloud servers"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Cloud providers cut data egress fees</a></h3><div class="meta"><span class="chip">Cloud</span><span>•</span><time>3h ago</time></div></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="sport" aria-label="Sport">
+      <h2>Sport</h2>
+      <div class="grid-3">
+        <article class="card"><img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200&auto=format&fit=crop" alt="Basketball court"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Record‑breaking night as star hits 60</a></h3><div class="meta"><span class="chip">Basketball</span><span>•</span><time>1h ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1471295253337-3ceaaedca402?q=80&w=1200&auto=format&fit=crop" alt="Football field"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Underdogs stun title favorites</a></h3><div class="meta"><span class="chip">Football</span><span>•</span><time>2h ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=1200&auto=format&fit=crop" alt="Track"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Sprinter sets new meet record</a></h3><div class="meta"><span class="chip">Athletics</span><span>•</span><time>3h ago</time></div></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="ent" aria-label="Entertainment">
+      <h2>Entertainment</h2>
+      <div class="grid-3">
+        <article class="card"><img src="https://images.unsplash.com/photo-1514517270727-08c8d79f0a05?q=80&w=1200&auto=format&fit=crop" alt="Cinema marquee"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Indie hit tops the box office</a></h3><div class="meta"><span class="chip">Film</span><span>•</span><time>1h ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=1200&auto=format&fit=crop" alt="Concert"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">Festival unveils stacked lineup</a></h3><div class="meta"><span class="chip">Music</span><span>•</span><time>2h ago</time></div></div></article>
+        <article class="card"><img src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=1200&auto=format&fit=crop" alt="TV"><div class="card-inner"><h3 class="headline" style="font-size:18px"><a href="#">The show everyone is talking about</a></h3><div class="meta"><span class="chip">TV</span><span>•</span><time>3h ago</time></div></div></article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="#">Who we are</a>
+        <a href="#">Standards</a>
+        <a href="#">Ethics</a>
+      </div>
+      <div class="footer-col">
+        <h4>Sections</h4>
+        <a href="#world">World</a>
+        <a href="#business">Business</a>
+        <a href="#tech">Tech</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Newsletters</a>
+        <a href="#">Podcasts</a>
+        <a href="#">Apps</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+    <div class="copyright">© <span id="year"></span> Global Daily Media. Built as a demo template inspired by major news homepages (no logos or trademarks used).</div>
+  </footer>
+
+  <script>
+    // Dark/Light toggle
+    const toggle = document.getElementById('themeToggle');
+    let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const setTheme = () => {
+      document.documentElement.style.colorScheme = dark ? 'dark':'light';
+      toggle.textContent = dark ? '🌞' : '🌙';
+      toggle.setAttribute('aria-pressed', String(dark));
+    };
+    toggle.addEventListener('click', ()=>{ dark = !dark; setTheme(); });
+    setTheme();
+
+    // Live clock in local time
+    const clock = document.getElementById('clock');
+    const fmt = new Intl.DateTimeFormat([], { hour:'2-digit', minute:'2-digit' });
+    setInterval(()=>{ clock.textContent = fmt.format(new Date()); }, 1000);
+
+    // Duplicate marquee content for seamless scroll on small screens
+    const marquee = document.getElementById('marqueeTrack');
+    marquee.innerHTML = marquee.innerHTML + marquee.innerHTML;
+
+    // Current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
