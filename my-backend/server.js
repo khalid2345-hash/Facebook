@@ -13,7 +13,7 @@ app.post("/submit", (req, res) => {
 // ❌ Wrong (hardcoded port)
 // app.listen(3000, () => console.log("Server running"));
 
-Correct (Render expects this)
+console.log("Correct (Render expects this")  // <- missing closing parenthesis
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
