@@ -1,19 +1,26 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const app = express();
 app.use(bodyParser.json());
 
-// Route
+// Serve static files from "public" folder
+app.use(express.static(path.join(__dirname, "public")));
+
+// Root route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Form submission route
 app.post("/submit", (req, res) => {
   const { email, password } = req.body;
+  console.log("Form received:", email, password);
   res.send("Form received!");
 });
 
-// ❌ Wrong (hardcoded port)
-// app.listen(3000, () => console.log("Server running"));
-
-console.log("Correct (Render expects this")  // <- missing closing parenthesis
+// Use dynamic port for Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
