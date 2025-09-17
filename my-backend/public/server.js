@@ -1,29 +1,20 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("form");
+const express = require("express");
+const bodyParser = require("body-parser");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault(); // stop page refresh
+const app = express();
+app.use(bodyParser.json());
 
-    const email = document.querySelector("#email").value;
-    const password = document.querySelector("#password").value;
+// Route
+app.post("/submit", (req, res) => {
+  const { email, password } = req.body;
+  res.send("Form received!");
+});
 
-    try {
-      const response = await fetch("/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+// ❌ Wrong (hardcoded port)
+// app.listen(3000, () => console.log("Server running"));
 
-      // ✅ If backend redirects, browser will follow automatically
-      if (response.redirected) {
-        window.location.href = response.url;
-      } else {
-        const result = await response.text();
-        alert(result); // fallback if no redirect
-      }
-    } catch (err) {
-      console.error("❌ Error submitting form:", err);
-      alert("⚠️ Something went wrong. Please try again.");
-    }
-  });
+Correct (Render expects this)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
